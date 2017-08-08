@@ -14,26 +14,47 @@ class PyParens(object):
         if lang_pairs:
             self.pairs.extend(lang_pairs)
 
+    def in_word(self, word, pos):
+        if len(word) == 1:
+            return False
+        bounds = ' \t\n'
+        if pos > 0 and self.text[pos - 1] in bounds:
+            if self.text[pos + len(word)] in bounds:
+                return False
+        return True
+
     def find_left(self, pair, cursor):
         pos = self.text.rfind(pair[0], None, cursor)
+        while self.in_word(pair[0], pos) and pos != -1:
+            pos = self.text.rfind(pair[0], None, pos)
         rpos = cursor
 
         while pos != -1:
             rpos = self.text.rfind(pair[1], pos + 1, rpos)
+            while self.in_word(pair[0], rpos) and rpos != -1:
+                rpos = self.text.rfind(pair[1], pos + 1, rpos)
             if rpos == -1:
                 break
             pos = self.text.rfind(pair[0], None, pos)
+            while self.in_word(pair[0], pos) and pos != -1:
+                pos = self.text.rfind(pair[0], None, pos)
         return pos
 
     def find_right(self, pair, cursor):
         pos = self.text.find(pair[1], cursor + 1)
+        while self.in_word(pair[1], pos) and pos != -1:
+            pos = self.text.find(pair[1], pos + 1)
         lpos = cursor
 
         while pos != -1:
             lpos = self.text.find(pair[0], lpos + 1, pos)
+            while self.in_word(pair[0], lpos) and lpos != -1:
+                lpos = self.text.find(pair[0], lpos + 1, pos)
             if lpos == -1:
                 break
             pos = self.text.find(pair[1], pos + 1)
+            while self.in_word(pair[1], pos) and pos != -1:
+                pos = self.text.find(pair[1], pos + 1)
 
         return pos
 

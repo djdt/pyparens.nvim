@@ -10,6 +10,7 @@ let g:pyparens_pairs =
 			\ [[ '{', '}' ], [ '(', ')' ], [ '[', ']' ]])
 let g:pyparens_ft_pairs = 
 			\ get(g:, 'pyparens_ft_pairs', {
+			\ 'vim': [['if','endif'], ['for','endfor'], ['augroup', 'augroup END']],
 			\})
 
 augroup PyParens
