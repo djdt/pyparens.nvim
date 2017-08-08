@@ -8,6 +8,9 @@ let g:pyparens_hl_group =
 let g:pyparens_pairs =
 			\ get(g:, 'pyparens_pairs',
 			\ [[ '{', '}' ], [ '(', ')' ], [ '[', ']' ]])
+let g:pyparens_ft_pairs = 
+			\ get(g:, 'pyparens_ft_pairs', {
+			\})
 
 augroup PyParens
 	autocmd! FileType * call pyparens#init()
