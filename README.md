@@ -19,7 +19,7 @@ Uses python style regexs.
 ```
 let g:pyparens_pairs = [[ '\{', '\}' ], [ '\(', '\)' ], [ '\[', '\]' ]]
 
-let g:pyparens_ft_pairs = {'cpp': [['\<', '\>']], 'vim': [['\bif\b', '\bendif\b']]}
+let g:pyparens_ft_pairs = {'cpp': [['(?<!\<)\<(?!\<)', '\>']], 'vim': [['\bif\b', '\bendif\b']]}
 ```
 
 Inspired by [matchparenalways.vim](https://github.com/justinmk/vim-matchparenalways) and [MatchTagAlways](https://github.com/Valloric/MatchTagAlways).
