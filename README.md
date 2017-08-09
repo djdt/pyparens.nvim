@@ -15,10 +15,11 @@ Set the highlight group used
 let g:pyparens_hl_group = 'MatchParen'
 ```
 Set the pairs detected. `g:pyparens_ft_pairs` can be used to set filetype specific pairs.
+Uses python style regexs.
 ```
-let g:pyparens_pairs = [[ '{', '}' ], [ '(', ')' ], [ '[', ']' ]]
+let g:pyparens_pairs = [[ '\{', '\}' ], [ '\(', '\)' ], [ '\[', '\]' ]]
 
-let g:pyparens_ft_pairs = {'cpp': [['<', '>']]}
+let g:pyparens_ft_pairs = {'cpp': [['\<', '\>']], 'vim': [['\bif\b', '\bendif\b']]}
 ```
 
 Inspired by [matchparenalways.vim](https://github.com/justinmk/vim-matchparenalways) and [MatchTagAlways](https://github.com/Valloric/MatchTagAlways).
