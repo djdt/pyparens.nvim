@@ -48,67 +48,54 @@ class PyParens(object):
         return m
 
     def regex_left(self, re_pairs):
-        pos = self.reverse_regex(re_pairs[0], 0, self.cursor)
-        if pos is not None:
-            pos = self.reverse_regex(
-                    re_pairs[0], 0, self.cursor + (pos.end() - pos.start()))
-            pos = pos.start(), pos.end()
-        rpos = self.cursor, self.cursor + 1
-
+        rmost = self.cursor
+        pos = self.reverse_regex(re_pairs[0], 0, rmost)
         while pos is not None:
-            rpos = self.reverse_regex(re_pairs[1], pos[1], rpos[0])
+            rpos = self.reverse_regex(re_pairs[1], pos.end(), rmost)
             if rpos is None:
                 break
             else:
-                rpos = rpos.start(), rpos.end()
-            pos = self.reverse_regex(re_pairs[0], 0, pos[0])
-            if pos is not None:
-                pos = pos.start(), pos.end()
+                rmost = rpos.start()
+            pos = self.reverse_regex(re_pairs[0], 0, pos.start())
         return pos
 
     def regex_right(self, re_pairs):
+        lmost = self.cursor + 1
         pos = re_pairs[1].search(self.text, self.cursor + 1)
-        if pos is not None:
-            pos = re_pairs[1].search(
-                    self.text, self.cursor + 1 - (pos.end() - pos.start()))
-            pos = pos.start(), pos.end()
-        lpos = self.cursor, self.cursor + 1
-
         while pos is not None:
-            lpos = re_pairs[0].search(self.text, lpos[1], pos[0])
-            if lpos is not None:
-                lpos = lpos.start(), lpos.end()
-            else:
+            lpos = re_pairs[0].search(self.text, lmost, pos.start())
+            if lpos is None:
                 break
-            pos = re_pairs[1].search(self.text, pos[1])
-            if pos is not None:
-                pos = pos.start(), pos.end()
+            else:
+                lmost = lpos.end()
+            pos = re_pairs[1].search(self.text, pos.end())
         return pos
 
     def regex_closest_pair(self):
         pclosest = None
-        lclosest = 0, 0
-        rclosest = len(self.text), 0
+        lclosest, rclosest = 0, len(self.text)
+        lmatch, rmatch = None, None
 
         # Check if cursor is a pair
-        for pair in self.pairs:
-            regex_pair = [re.compile(pair[0]), re.compile(pair[1])]
-            if regex_pair[0].match(self.text, self.cursor) is not None or \
-               regex_pair[1].match(self.text, self.cursor) is not None:
-                return None, None
+        # for pair in self.pairs:
+        #     regex_pair = [re.compile(pair[0]), re.compile(pair[1])]
+        #     if regex_pair[0].match(self.text, self.cursor) is not None or \
+        #        regex_pair[1].match(self.text, self.cursor) is not None:
+        #         return None, None
 
         for pair in self.pairs:
             regex_pair = [re.compile(pair[0]), re.compile(pair[1])]
             lpos = self.regex_left(regex_pair)
-            if lpos is not None and lpos[1] > lclosest[1]:
+            if lpos is not None and lpos.end() > lclosest:
                 rpos = self.regex_right(regex_pair)
-                if rpos is not None and rpos[0] < rclosest[0]:
+                if rpos is not None and rpos.start() < rclosest:
                     pclosest = pair
-                    lclosest, rclosest = lpos, rpos
+                    lmatch, rmatch = lpos, rpos
+                    lclosest, rclosest = lpos.end(), rpos.start()
 
         if pclosest is None:
             return None, None
-        return lclosest, rclosest
+        return lmatch, rmatch
 
     def highlight(self, positions):
         cmd = []
@@ -131,6 +118,6 @@ class PyParens(object):
         lc, rc = self.regex_closest_pair()
         if lc is None or rc is None:
             return
-        lc = self.bufpos(lc[0]), self.bufpos(lc[1])
-        rc = self.bufpos(rc[0]), self.bufpos(rc[1])
+        lc = self.bufpos(lc.start()), self.bufpos(lc.end())
+        rc = self.bufpos(rc.start()), self.bufpos(rc.end())
         self.highlight([lc, rc])
