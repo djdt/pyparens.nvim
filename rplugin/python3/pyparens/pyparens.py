@@ -45,24 +45,32 @@ class PyParens(object):
         m = None
         for m in regex.finditer(self.text, start, end):
             pass
-        if m is not None:
-            return m.start(), m.end()
-        return None
+        return m
 
     def regex_left(self, re_pairs):
         pos = self.reverse_regex(re_pairs[0], 0, self.cursor)
+        if pos is not None:
+            pos = self.reverse_regex(
+                    re_pairs[0], 0, self.cursor + (pos.end() - pos.start()))
+            pos = pos.start(), pos.end()
         rpos = self.cursor, self.cursor + 1
 
         while pos is not None:
             rpos = self.reverse_regex(re_pairs[1], pos[1], rpos[0])
             if rpos is None:
                 break
+            else:
+                rpos = rpos.start(), rpos.end()
             pos = self.reverse_regex(re_pairs[0], 0, pos[0])
+            if pos is not None:
+                pos = pos.start(), pos.end()
         return pos
 
     def regex_right(self, re_pairs):
         pos = re_pairs[1].search(self.text, self.cursor + 1)
         if pos is not None:
+            pos = re_pairs[1].search(
+                    self.text, self.cursor + 1 - (pos.end() - pos.start()))
             pos = pos.start(), pos.end()
         lpos = self.cursor, self.cursor + 1
 
