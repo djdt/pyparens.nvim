@@ -49,7 +49,7 @@ class PyParens(object):
 
     def regex_left(self, re_pairs):
         rmost = self.cursor
-        pos = self.reverse_regex(re_pairs[0], 0, rmost)
+        pos = self.reverse_regex(re_pairs[0], 0, self.cursor + 1)
         while pos is not None:
             rpos = self.reverse_regex(re_pairs[1], pos.end(), rmost)
             if rpos is None:
@@ -61,7 +61,7 @@ class PyParens(object):
 
     def regex_right(self, re_pairs):
         lmost = self.cursor + 1
-        pos = re_pairs[1].search(self.text, self.cursor + 1)
+        pos = re_pairs[1].search(self.text, self.cursor)
         while pos is not None:
             lpos = re_pairs[0].search(self.text, lmost, pos.start())
             if lpos is None:

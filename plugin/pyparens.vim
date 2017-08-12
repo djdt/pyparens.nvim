@@ -16,18 +16,3 @@ let g:pyparens_ft_pairs =
 augroup PyParens
 	autocmd! FileType * call pyparens#init()
 augroup END
-
-function! pyparens#init()
-	if &diff
-		return
-	endif
-	if pumvisible() || (&t_Co < 8 && !has("gui_running"))
-		return
-	endif
-	call PyParensInit()
-
-	augroup PyParensMatcher
-				autocmd! CursorMoved,CursorMovedI <buffer>
-							\ call PyParensMatch()
-	augroup END
-endfunction
