@@ -42,14 +42,29 @@ class PyParens(object):
         return pos + bufpos[1]
 
     def reverse_regex(self, regex, start, end):
-        m = None
-        for m in regex.finditer(self.text, start, end):
+        match = None
+        for match in regex.finditer(self.text, start, end):
             pass
-        return m
+        return match
+
+    def match_near_cursor_left(self, regex):
+        match = None
+        for m in regex.finditer(self.text):
+            if m.start() > self.cursor:
+                break
+            match = m
+        return match
+
+    def match_near_cursor_right(self, regex):
+        match = None
+        for match in regex.finditer(self.text):
+            if match.end() > self.cursor:
+                break
+        return match
 
     def regex_left(self, re_pairs):
         rmost = self.cursor
-        pos = self.reverse_regex(re_pairs[0], 0, self.cursor + 1)
+        pos = self.match_near_cursor_left(re_pairs[0])
         while pos is not None:
             rpos = self.reverse_regex(re_pairs[1], pos.end(), rmost)
             if rpos is None:
@@ -61,7 +76,7 @@ class PyParens(object):
 
     def regex_right(self, re_pairs):
         lmost = self.cursor + 1
-        pos = re_pairs[1].search(self.text, self.cursor)
+        pos = self.match_near_cursor_right(re_pairs[1])
         while pos is not None:
             lpos = re_pairs[0].search(self.text, lmost, pos.start())
             if lpos is None:
@@ -75,13 +90,6 @@ class PyParens(object):
         pclosest = None
         lclosest, rclosest = 0, len(self.text)
         lmatch, rmatch = None, None
-
-        # Check if cursor is a pair
-        # for pair in self.pairs:
-        #     regex_pair = [re.compile(pair[0]), re.compile(pair[1])]
-        #     if regex_pair[0].match(self.text, self.cursor) is not None or \
-        #        regex_pair[1].match(self.text, self.cursor) is not None:
-        #         return None, None
 
         for pair in self.pairs:
             regex_pair = [re.compile(pair[0]), re.compile(pair[1])]
