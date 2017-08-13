@@ -48,19 +48,20 @@ class PyParens(object):
         return match
 
     def match_near_cursor_left(self, regex):
-        match = None
-        for m in regex.finditer(self.text):
-            if m.start() > self.cursor:
-                break
-            match = m
-        return match
+        prev = None
+        for match in regex.finditer(self.text):
+            if match.start() > self.cursor:
+                return prev
+            prev = match
+        if prev and prev.start() <= self.cursor:
+            return prev
+        return None
 
     def match_near_cursor_right(self, regex):
-        match = None
         for match in regex.finditer(self.text):
             if match.end() > self.cursor:
-                break
-        return match
+                return match
+        return None
 
     def regex_left(self, re_pairs):
         rmost = self.cursor
