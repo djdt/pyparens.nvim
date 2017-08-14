@@ -5,7 +5,7 @@ Neovim plugin to highlight surrounding braces.
 
 Using Plug:
 ```
-Plug 'djdt/pyparens.nvim', {'do': 'UpdateRemotePlugins'}
+Plug 'djdt/pyparens.nvim', {'do': ':UpdateRemotePlugins'}
 ```
 
 ## Options
