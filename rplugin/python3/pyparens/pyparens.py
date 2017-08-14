@@ -50,6 +50,7 @@ class PyParens(object):
         return match
 
     def match_near_cursor_left(self, regex):
+        # Matches even when inside cursor
         prev = None
         for match in regex.finditer(self.text):
             if match.start() > self.cursor:
@@ -67,13 +68,16 @@ class PyParens(object):
 
     def regex_left(self, re_pairs):
         rmost = self.cursor
+        # Get the nearest match to cursor
         pos = self.match_near_cursor_left(re_pairs[0])
         while pos is not None:
+            # Check if pair end between match and cursor
             rpos = self.reverse_regex(re_pairs[1], pos.end(), rmost)
             if rpos is None:
                 break
             else:
                 rmost = rpos.start()
+            # If found, retry search with next closest pair start
             pos = self.reverse_regex(re_pairs[0], 0, pos.start())
         return pos
 
@@ -119,25 +123,29 @@ class PyParens(object):
 
         # Highlight column if needed
         if self.col_group != '' and right[1][0] - left[0][0] > 2:
-            # cur_line = self.vim.current.window.cursor[0] - 1
             lower = min(right[1][1], left[0][1])
             self.vim.command('2match {} /'.format(self.col_group) +
                              '.\%>{}l\%<{}l\%{}c/'.format(
                                  left[0][0] + 1, right[1][0] + 1, lower))
 
     def match(self):
+        # Clear old match groups
         self.vim.command('silent! match clear {}'.format(self.group))
         self.vim.command('silent! 2match clear {}'.format(self.col_group))
+
+        # Get any changes to buffer since init
+        # Bounds -1 as lines are 1 indexed
         self.bounds = (int(self.vim.eval("line('w0')")) - 1,
                        int(self.vim.eval("line('w$')")))
         self.buffer = self.vim.current.buffer[self.bounds[0]:self.bounds[1]]
-        self.text = '\n'.join(self.buffer)
         cursor = self.vim.current.window.cursor
         self.cursor = self.textpos((cursor[0] - 1, cursor[1]))
+        # Form an easily searchable text
+        self.text = '\n'.join(self.buffer)
 
-        lc, rc = self.regex_closest_pair()
-        if lc is None or rc is None:
+        left, right = self.regex_closest_pair()
+        if left is None or right is None:
             return
-        lc = self.bufpos(lc.start()), self.bufpos(lc.end())
-        rc = self.bufpos(rc.start()), self.bufpos(rc.end())
-        self.highlight(lc, rc)
+        left = self.bufpos(left.start()), self.bufpos(left.end())
+        right = self.bufpos(right.start()), self.bufpos(right.end())
+        self.highlight(left, right)
