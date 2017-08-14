@@ -10,9 +10,13 @@ Plug 'djdt/pyparens.nvim', {'do': ':UpdateRemotePlugins'}
 
 ## Options
 
-Set the highlight group used
+Set the highlight group used:
 ```
 let g:pyparens_hl_group = 'MatchParen'
+```
+If highlighting of the current blocks first column is required:
+```
+let g:pyparens_hl_col_group = '<Group>'
 ```
 Set the pairs detected. `g:pyparens_ft_pairs` can be used to set filetype specific pairs.
 Uses python style regexs.
