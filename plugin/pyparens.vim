@@ -11,7 +11,9 @@ else
 endif
 
 let g:pyparens_hl_group =
-			\ get(g:, 'pyparens_hl_group',     'MatchParen')
+			\ get(g:, 'pyparens_hl_group', 'MatchParen')
+let g:pyparens_hl_col_group =
+			\ get(g:, 'pyparens_hl_col_group', '')
 let g:pyparens_pairs =
 			\ get(g:, 'pyparens_pairs',
 			\ [[ '\(', '\)' ], [ '\[', '\]' ], [ '\{', '\}' ]])

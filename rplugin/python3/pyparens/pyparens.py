@@ -6,12 +6,14 @@ class PyParens(object):
         self.vim = vim
         self.pairs = []
         self.group = ""
+        self.col_group = ""
         self.bounds = [0, 0]
         self.text = ""
         self.cursor = 0
 
     def init(self):
         self.group = self.vim.vars['pyparens_hl_group']
+        self.col_group = self.vim.vars['pyparens_hl_col_group']
         filetype = self.vim.current.buffer.options['ft']
         self.pairs = self.vim.vars['pyparens_pairs']
         lang_pairs = self.vim.vars['pyparens_ft_pairs'].get(filetype)
@@ -106,17 +108,26 @@ class PyParens(object):
             return None, None
         return lmatch, rmatch
 
-    def highlight(self, positions):
+    def highlight(self, left, right):
         cmd = []
-        for start, end in positions:
+        for start, end in [left, right]:
             # +1 as buffer is 0 index, windows are 1 index
             cmd.append('\%{}l\%>{}c\%<{}c'.format(
                 start[0] + 1, start[1] - 1, end[1]))
         self.vim.command(
             'match {} /'.format(self.group) + '\|'.join(cmd) + '/')
 
+        # Highlight column if needed
+        if self.col_group != '' and right[1][0] - left[0][0] > 2:
+            # cur_line = self.vim.current.window.cursor[0] - 1
+            lower = min(right[1][1], left[0][1])
+            self.vim.command('2match {} /'.format(self.col_group) +
+                             '.\%>{}l\%<{}l\%{}c/'.format(
+                                 left[0][0] + 1, right[1][0] + 1, lower))
+
     def match(self):
         self.vim.command('silent! match clear {}'.format(self.group))
+        self.vim.command('silent! 2match clear {}'.format(self.col_group))
         self.bounds = (int(self.vim.eval("line('w0')")) - 1,
                        int(self.vim.eval("line('w$')")))
         self.buffer = self.vim.current.buffer[self.bounds[0]:self.bounds[1]]
@@ -129,4 +140,4 @@ class PyParens(object):
             return
         lc = self.bufpos(lc.start()), self.bufpos(lc.end())
         rc = self.bufpos(rc.start()), self.bufpos(rc.end())
-        self.highlight([lc, rc])
+        self.highlight(lc, rc)
