@@ -22,5 +22,5 @@ let g:pyparens_ft_pairs =
 			\ )
 
 augroup PyParens
-	autocmd! FileType * call pyparens#init()
+	autocmd! BufEnter * call pyparens#init()
 augroup END
