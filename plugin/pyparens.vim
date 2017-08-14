@@ -16,9 +16,8 @@ let g:pyparens_pairs =
 			\ get(g:, 'pyparens_pairs',
 			\ [[ '\(', '\)' ], [ '\[', '\]' ], [ '\{', '\}' ]])
 let g:pyparens_ft_pairs =
-			\ get(g:, 'pyparens_ft_pairs', {
-			\ 'vim': [['\bif\b','\bendif\b'], ['\bfor\b','\bendfor\b']],
-			\})
+			\ get(g:, 'pyparens_ft_pairs', {}
+			\ )
 
 augroup PyParens
 	autocmd! FileType * call pyparens#init()
