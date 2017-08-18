@@ -18,7 +18,9 @@ The leftmost column of the current block will be highlighted if `g:pyparens_hl_c
 
 Use `g:pyparens_pairs` to set the types of pairs highlighted.
 Each pair is a list of python regexes for opening and closing words.
+
 `g:pyparens_ft_pairs` can be used to set pairs used only for specific filetypes.
+
 As an example:
 ```
 let g:pyparens_pairs = [[ '\{', '\}' ], [ '\(', '\)' ], [ '\[', '\]' ]] <--default
