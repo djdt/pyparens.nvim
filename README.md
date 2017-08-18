@@ -10,18 +10,18 @@ Plug 'djdt/pyparens.nvim', {'do': ':UpdateRemotePlugins'}
 
 ## Options
 
-Set the highlight group used:
+To set the highlight group use `g:pyparens_hl_group`:
 ```
-let g:pyparens_hl_group = 'MatchParen'
+let g:pyparens_hl_group = 'MatchParen' <--default
 ```
-If highlighting of the current blocks first column is required:
+The leftmost column of the current block will be highlighted if `g:pyparens_hl_col_group` is set.
+
+Use `g:pyparens_pairs` to set the types of pairs highlighted.
+Each pair is a list of python regexes for opening and closing words.
+`g:pyparens_ft_pairs` can be used to set pairs used only for specific filetypes.
+As an example:
 ```
-let g:pyparens_hl_col_group = '<Group>'
-```
-Set the pairs detected. `g:pyparens_ft_pairs` can be used to set filetype specific pairs.
-Uses python style regexs.
-```
-let g:pyparens_pairs = [[ '\{', '\}' ], [ '\(', '\)' ], [ '\[', '\]' ]]
+let g:pyparens_pairs = [[ '\{', '\}' ], [ '\(', '\)' ], [ '\[', '\]' ]] <--default
 
 let g:pyparens_ft_pairs = {'cpp': [['(?<!\<)\<(?!\<)', '\>']], 'vim': [['\bif\b', '\bendif\b']]}
 ```
