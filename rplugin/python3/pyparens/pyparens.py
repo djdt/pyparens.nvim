@@ -112,6 +112,15 @@ class PyParens(object):
             return None, None
         return lmatch, rmatch
 
+    def highlight_col(self, left, right):
+        lower = min(right[1][1], left[0][1])
+        # Return if no column to highlight
+        if lower == 0:
+            return
+        self.vim.command('2match {} /'.format(self.col_group) +
+                         '.\%>{}l\%<{}l\%{}c/'.format(
+                             left[0][0] + 1, right[1][0] + 1, lower))
+
     def highlight(self, left, right):
         cmd = []
         for start, end in [left, right]:
@@ -120,13 +129,6 @@ class PyParens(object):
                 start[0] + 1, start[1] - 1, end[1]))
         self.vim.command(
             'match {} /'.format(self.group) + '\|'.join(cmd) + '/')
-
-        # Highlight column if needed
-        if self.col_group != '' and right[1][0] - left[0][0] > 2:
-            lower = min(right[1][1], left[0][1])
-            self.vim.command('2match {} /'.format(self.col_group) +
-                             '.\%>{}l\%<{}l\%{}c/'.format(
-                                 left[0][0] + 1, right[1][0] + 1, lower))
 
     def match(self):
         # Clear old match groups
@@ -149,3 +151,6 @@ class PyParens(object):
         left = self.bufpos(left.start()), self.bufpos(left.end())
         right = self.bufpos(right.start()), self.bufpos(right.end())
         self.highlight(left, right)
+        # Highlight column if needed
+        if self.col_group != '' and right[1][0] - left[0][0] > 2:
+            self.highlight_col(left, right)
