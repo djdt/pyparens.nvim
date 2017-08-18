@@ -113,13 +113,13 @@ class PyParens(object):
         return lmatch, rmatch
 
     def highlight_col(self, left, right):
-        lower = min(right[1][1], left[0][1])
+        lower = min(left[0][1], right[0][1])
         # Return if no column to highlight
-        if lower == 0:
+        if lower < 1:
             return
         self.vim.command('2match {} /'.format(self.col_group) +
                          '.\%>{}l\%<{}l\%{}c/'.format(
-                             left[0][0] + 1, right[1][0] + 1, lower))
+                             left[0][0] + 1, right[0][0] + 1, lower + 1))
 
     def highlight(self, left, right):
         cmd = []
