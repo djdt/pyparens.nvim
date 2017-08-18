@@ -49,7 +49,7 @@ class PyParens(object):
             pass
         return match
 
-    def match_near_cursor_left(self, regex):
+    def find_in_cursor_left(self, regex):
         # Matches even when inside cursor
         prev = None
         for match in regex.finditer(self.text):
@@ -60,16 +60,16 @@ class PyParens(object):
             return prev
         return None
 
-    def match_near_cursor_right(self, regex):
+    def find_in_cursor_right(self, regex):
         for match in regex.finditer(self.text):
             if match.end() > self.cursor:
                 return match
         return None
 
-    def regex_left(self, re_pairs):
+    def find_pair_left(self, re_pairs):
         rmost = self.cursor
         # Get the nearest match to cursor
-        pos = self.match_near_cursor_left(re_pairs[0])
+        pos = self.find_in_cursor_left(re_pairs[0])
         while pos is not None:
             # Check if pair end between match and cursor
             rpos = self.reverse_regex(re_pairs[1], pos.end(), rmost)
@@ -81,9 +81,9 @@ class PyParens(object):
             pos = self.reverse_regex(re_pairs[0], 0, pos.start())
         return pos
 
-    def regex_right(self, re_pairs):
+    def find_pair_right(self, re_pairs):
         lmost = self.cursor + 1
-        pos = self.match_near_cursor_right(re_pairs[1])
+        pos = self.find_in_cursor_right(re_pairs[1])
         while pos is not None:
             lpos = re_pairs[0].search(self.text, lmost, pos.start())
             if lpos is None:
@@ -93,16 +93,16 @@ class PyParens(object):
             pos = re_pairs[1].search(self.text, pos.end())
         return pos
 
-    def regex_closest_pair(self):
+    def find_closest_pair(self):
         pclosest = None
         lclosest, rclosest = 0, len(self.text)
         lmatch, rmatch = None, None
 
         for pair in self.pairs:
             regex_pair = [re.compile(pair[0]), re.compile(pair[1])]
-            lpos = self.regex_left(regex_pair)
+            lpos = self.find_pair_left(regex_pair)
             if lpos is not None and lpos.end() > lclosest:
-                rpos = self.regex_right(regex_pair)
+                rpos = self.find_pair_right(regex_pair)
                 if rpos is not None and rpos.start() < rclosest:
                     pclosest = pair
                     lmatch, rmatch = lpos, rpos
@@ -145,7 +145,7 @@ class PyParens(object):
         # Form an easily searchable text
         self.text = '\n'.join(self.buffer)
 
-        left, right = self.regex_closest_pair()
+        left, right = self.find_closest_pair()
         if left is None or right is None:
             return
         left = self.bufpos(left.start()), self.bufpos(left.end())
