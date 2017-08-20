@@ -119,7 +119,7 @@ class PyParens(object):
             return
         self.vim.command('2match {} /'.format(self.col_group) +
                          '.\%>{}l\%<{}l\%{}c/'.format(
-                             left[0][0] + 1, right[0][0], lower + 1))
+                             left[0][0] + 1, right[0][0] + 1, lower + 1))
 
     def highlight(self, left, right):
         cmd = []
