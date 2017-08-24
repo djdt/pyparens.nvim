@@ -1,0 +1,78 @@
+*pyparens.txt* Highlighting of surrounding braces/parens.
+
+=============================================================================
+
+Contents ~
+1. About						      |pyparens-about|
+2. Installation						    |pyparens-install|
+3. Options						    |pyparens-options|
+
+=============================================================================
+							      *pyparens-about*
+About ~
+
+Pyparens is a neovim plugin for highlighting parens, braces or any other
+defined start and end patterns. The plugin works by searching for the
+closest pair that encloses the current cursor position. 
+Patterns are defined as python regex expressions
+(https://docs.python.org/3/howto/regex.html) and both a opening and closing
+regex must be provided.
+By setting |g:pyparens_hl_col_group| the space between pairs more than two
+lines away can also be highlighted for easy identification of the current
+scope.
+
+=============================================================================
+							    *pyparens-install*
+Installation ~
+
+Pyparens requires neovim and python3.
+
+Using Plug:
+>
+  Plug 'djdt/pyparens.nvim', {do: ':UpdateRemotePlugins'}
+
+=============================================================================
+							    *pyparens-options*
+Options ~
+
+-----------------------------------------------------------------------------
+*g:pyparens_pairs*
+This option defines a list of pairs to search for in all files.
+Each pair must be defined as a list containing the start (opening) and end
+(closing) python regexs of the pair.
+Default: [['\(', '\)'], ['\[', '\]'], ['\{', '\}']]
+>
+  let g:pyparens_pairs = [
+      \ ['\(', '\)'],
+      \ ['\[', '\]'],
+      \ ['\{', '\}']
+      \]
+
+-----------------------------------------------------------------------------
+*g:pyparens_ft_pairs*
+This option contains the pairs to be searched only in specific filetypes.
+It consists of a vim dictionary containing filetype keys and lists of pairs
+as values.
+Default: {}
+>
+  let g:pyparens_ft_pairs = {
+      \ 'cpp': [['(?<!\<)\<(?!\<)', '\>']],
+      \ 'vim': [['\bif\b', '\bendif\b'], ['\bfor\b', '\bendfor\b']]
+      \}
+
+-----------------------------------------------------------------------------
+*g:pyparens_hl_group*
+This option sets the highlight group used to highlight any matching pairs.
+Default: 'MatchParen'
+>
+  let g:pyparens_hl_group = 'MatchParen'
+
+-----------------------------------------------------------------------------
+*g:pyparens_hl_col_group*
+If set, this option will define the group used to highlight the leftmost
+column between to pairs on different lines.
+Default: ''
+>
+  let g:pyparens_hl_col_group = 'CursorLine'
+
+vim:tw=78:ts=8:ft=help:norl:
