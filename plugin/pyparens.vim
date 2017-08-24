@@ -3,6 +3,11 @@ if exists("g:loaded_pyparens")
 endif
 let g:loaded_pyparens = 1
 
+if !has('python3') || !has('nvim')
+	echo "PyParens requires python3 and neovim."
+	finish
+endif
+
 " Disbale matchparen
 if exists("g:loaded_matchparen")
 	exec NoMatchParen
