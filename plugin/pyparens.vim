@@ -8,6 +8,11 @@ if !has('python3')
 	finish
 endif
 
+if v:version < 800 && !has('nvim')
+	echo "PyParens does not work with this version of vim."
+	finish
+endif
+
 " Disable matchparen
 if exists("g:loaded_matchparen")
 	exec NoMatchParen
