@@ -117,7 +117,7 @@ class PyParens(object):
         # Return if no column to highlight
         if lower < 1:
             return
-        self.vim.command('2match {} /'.format(self.col_group) +
+        self.vim.command('3match {} /'.format(self.col_group) +
                          '.\%>{}l\%<{}l\%{}c/'.format(
                              left[0][0] + 1, right[0][0] + 1, lower + 1))
 
@@ -128,12 +128,12 @@ class PyParens(object):
             cmd.append('\%{}l\%>{}c\%<{}c'.format(
                 start[0] + 1, start[1] - 1, end[1]))
         self.vim.command(
-            'match {} /'.format(self.group) + '\|'.join(cmd) + '/')
+            '2match {} /'.format(self.group) + '\|'.join(cmd) + '/')
 
     def match(self):
         # Clear old match groups
-        self.vim.command('silent! match clear {}'.format(self.group))
-        self.vim.command('silent! 2match clear {}'.format(self.col_group))
+        self.vim.command('silent! 2match clear {}'.format(self.group))
+        self.vim.command('silent! 3match clear {}'.format(self.col_group))
 
         # Get any changes to buffer since init
         # Bounds -1 as lines are 1 indexed
