@@ -3,12 +3,12 @@ if exists("g:loaded_pyparens")
 endif
 let g:loaded_pyparens = 1
 
-if !has('python3') || !has('nvim')
-	echo "PyParens requires python3 and neovim."
+if !has('python3')
+	echo "PyParens requires python3."
 	finish
 endif
 
-" Disbale matchparen
+" Disable matchparen
 if exists("g:loaded_matchparen")
 	exec NoMatchParen
 else
@@ -27,5 +27,5 @@ let g:pyparens_ft_pairs =
 			\ )
 
 augroup PyParens
-	autocmd! BufEnter * call pyparens#init()
+	autocmd! BufEnter * call pyparens#setup()
 augroup END
