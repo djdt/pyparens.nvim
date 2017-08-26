@@ -3,10 +3,10 @@ let s:pyparens_path = expand('<sfile>:p:h:h:h') . '/rplugin/python3'
 import sys
 import vim
 sys.path.insert(0, vim.eval('s:pyparens_path'))
-import pyparens.PyParens
-import pyparens.rplugin.Neovim
-nvim = Neovim(vim)
-pyparens = PyParens(nvim)
+import pyparens
+import pyparens.rplugin
+nvim = pyparens.rplugin.Neovim(vim)
+pyparens = pyparens.PyParens(nvim)
 EOF
 
 function! pyparens#vim#init()
