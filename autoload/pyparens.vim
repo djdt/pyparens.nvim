@@ -10,7 +10,7 @@ function! pyparens#setup()
 		call pyparens#init()
 
 		augroup PyParensMatcher
-					autocmd! CursorMoved,CursorMovedI <buffer>
+					autocmd! CursorMoved,CursorMovedI,WinEnter <buffer>
 								\ call pyparens#match()
 		augroup END
 endfunction

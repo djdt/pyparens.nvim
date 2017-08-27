@@ -10,7 +10,7 @@ class PyParens(object):
         self.bounds = [0, 0]
         self.text = ""
         self.cursor = 0
-        self.last_pair_pos = [0, 0]
+        self.last_pair_pos = [None, None]
 
     def init(self):
         self.group = self.vim.vars['pyparens_hl_group']
@@ -151,6 +151,7 @@ class PyParens(object):
 
         # If empty return
         if left is None or right is None:
+            self.last_pair_pos = [None, None]
             self.clear_highlight()
             return
         left = self.bufpos(left.start()), self.bufpos(left.end())
