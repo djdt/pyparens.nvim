@@ -10,6 +10,7 @@ class PyParens(object):
         self.bounds = [0, 0]
         self.text = ""
         self.cursor = 0
+        self.last_pair_pos = [0, 0]
 
     def init(self):
         self.group = self.vim.vars['pyparens_hl_group']
@@ -112,15 +113,6 @@ class PyParens(object):
             return None, None
         return lmatch, rmatch
 
-    def highlight_col(self, left, right):
-        lower = min(left[0][1], right[0][1])
-        # Return if no column to highlight
-        if lower < 1:
-            return
-        self.vim.command('3match {} /'.format(self.col_group) +
-                         '.\%>{}l\%<{}l\%{}c/'.format(
-                             left[0][0] + 1, right[0][0] + 1, lower + 1))
-
     def highlight(self, left, right):
         cmd = []
         for start, end in [left, right]:
@@ -130,11 +122,20 @@ class PyParens(object):
         self.vim.command(
             '2match {} /'.format(self.group) + '\|'.join(cmd) + '/')
 
-    def match(self):
-        # Clear old match groups
+    def highlight_col(self, left, right):
+        lower = min(left[0][1], right[0][1])
+        # Return if no column to highlight
+        if lower < 1:
+            return
+        self.vim.command('3match {} /'.format(self.col_group) +
+                         '.\%>{}l\%<{}l\%{}c/'.format(
+                             left[0][0] + 1, right[0][0] + 1, lower + 1))
+
+    def clear_highlight(self):
         self.vim.command('silent! 2match clear {}'.format(self.group))
         self.vim.command('silent! 3match clear {}'.format(self.col_group))
 
+    def match(self):
         # Get any changes to buffer since init
         # Bounds -1 as lines are 1 indexed
         self.bounds = (int(self.vim.eval("line('w0')")) - 1,
@@ -145,11 +146,24 @@ class PyParens(object):
         # Form an easily searchable text
         self.text = '\n'.join(self.buffer)
 
+        # Find the closest mathcing pair
         left, right = self.find_closest_pair()
+
+        # If empty return
         if left is None or right is None:
+            self.clear_highlight()
             return
         left = self.bufpos(left.start()), self.bufpos(left.end())
         right = self.bufpos(right.start()), self.bufpos(right.end())
+
+        # Return if match hasn't changed
+        if self.last_pair_pos == [left, right]:
+            return
+        self.last_pair_pos = [left, right]
+
+        # Clear old match groups
+        self.clear_highlight()
+        # Highlight matches
         self.highlight(left, right)
         # Highlight column if needed
         if self.col_group != '' and right[1][0] - left[0][0] > 2:
