@@ -14,7 +14,7 @@ if v:version < 800 && !has('nvim')
 endif
 
 " Disable matchparen
-if exists("g:loaded_matchparen")
+if exists(":NoMatchParen")
 	exec NoMatchParen
 else
 	let g:loaded_matchparen = 1
