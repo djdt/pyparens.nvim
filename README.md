@@ -1,5 +1,5 @@
 # pyparens.nvim
-Neovim / vim8 plugin to highlight surrounding braces.
+Neovim / vim8 plugin to highlight surrounding braces / scope.
 
 ![Usage image parens](https://user-images.githubusercontent.com/10266332/29747051-63761a30-8b30-11e7-8a1f-ed13d88562ae.gif)
 ![Usage image words](https://user-images.githubusercontent.com/10266332/29747052-64b2883e-8b30-11e7-9e81-b6a7982083e0.gif)
