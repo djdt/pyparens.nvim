@@ -13,6 +13,6 @@ class PyParensHandler(object):
     def init(self, args):
         self._pyparens.init()
 
-    @neovim.function('PyParensMatch', sync=True)
+    @neovim.function('PyParensMatch', sync=False)
     def match(self, args):
         self._pyparens.match()
