@@ -1,6 +1,10 @@
 # pyparens.nvim
 Neovim / vim8 plugin to highlight surrounding braces / scope.
 
+As it works using python regexes you can highlight any type of pair that you want.
+
+Column highlighting can be enabled to easily identify the scope over multiple lines. 
+
 ![Usage image parens](https://user-images.githubusercontent.com/10266332/29747051-63761a30-8b30-11e7-8a1f-ed13d88562ae.gif)
 ![Usage image words](https://user-images.githubusercontent.com/10266332/29747052-64b2883e-8b30-11e7-9e81-b6a7982083e0.gif)
 
@@ -26,7 +30,7 @@ The leftmost column of the current block will be highlighted if `g:pyparens_hl_c
 Use `g:pyparens_pairs` to set the types of pairs highlighted.
 Each pair is a list of [python regexes](https://docs.python.org/3/howto/regex.html#regex-howto) for opening and closing words.
 
-`g:pyparens_ft_pairs` can be used to set pairs used only for specific filetypes.
+`g:pyparens_ft_pairs` can be used to set additional pairs used only for specific filetypes.
 
 As an example:
 ```
