@@ -31,6 +31,9 @@ let g:pyparens_ft_pairs =
 			\ get(g:, 'pyparens_ft_pairs', {}
 			\ )
 
+command! -bar PyParensEnable call pyparens#enable()
+command! -bar PyParensDisable call pyparens#disable()
+
 augroup PyParens
 	autocmd! BufEnter * call pyparens#setup()
 augroup END
