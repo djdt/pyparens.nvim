@@ -46,10 +46,6 @@ class PyParens(object):
 
         return textpos + bufpos[1]
 
-        # for i in range(bufpos[0] - self.bounds[0]):
-        #     pos += len(self.vim.current.buffer[i]) + 1  # + 1 for \n
-        # return pos + bufpos[1]
-
     def reverse_regex(self, regex, start, end):
         match = None
         for match in regex.finditer(self.text, start, end):
@@ -105,6 +101,14 @@ class PyParens(object):
         lclosest, rclosest = 0, len(self.text)
         lmatch, rmatch = None, None
 
+        # Build pairs
+        # filetype = self.vim.current.buffer.options['ft']
+        # pairs = self.vim.vars['pyparens_pairs']
+        # lang_pairs = self.vim.vars['pyparens_ft_pairs'].get(filetype)
+        # if lang_pairs:
+        #     pairs.extend(lang_pairs)
+
+        # Search the text for matches
         for pair in self.pairs:
             regex_pair = [re.compile(pair[0]), re.compile(pair[1])]
             lpos = self.find_pair_left(regex_pair)
@@ -120,13 +124,13 @@ class PyParens(object):
         return lmatch, rmatch
 
     def highlight(self, left, right):
-        cmd = []
-        for start, end in [left, right]:
-            # +1 as buffer is 0 index, windows are 1 index
-            cmd.append('\%{}l\%>{}c\%<{}c'.format(
-                start[0] + 1, start[1] - 1, end[1]))
-        self.vim.command('2match {} /'.format(
-            self.vim.vars['pyparens_hl_group']) + '\|'.join(cmd) + '/')
+        cmd = "2match {} /{}\|{}/"
+        pattern = "\%{}l\%>{}c\%<{}c"
+        self.vim.command(cmd.format(
+            self.vim.vars['pyparens_hl_group'],
+            pattern.format(left[0][0] + 1, left[0][1] - 1, left[1][1]),
+            pattern.format(right[0][0] + 1, right[0][1] - 1, right[1][1]))
+        )
 
     def highlight_col(self, left, right):
         lower = min(left[0][1], right[0][1])
@@ -140,7 +144,7 @@ class PyParens(object):
 
     def clear_highlight(self):
         self.vim.command('silent! 2match clear {}'.format(
-            self.vim.vars['pyparens_hl_group']))
+            self.vim.vars['pyparens_hl_col_group']))
         self.vim.command('silent! 3match clear {}'.format(
             self.vim.vars['pyparens_hl_col_group']))
 
@@ -153,7 +157,6 @@ class PyParens(object):
                 self.vim.current.buffer[self.bounds[0]:self.bounds[1]])
         cursor = self.vim.current.window.cursor
         self.cursor = self.textpos((cursor[0] - 1, cursor[1]))
-        # Form an easily searchable text
 
         # Find the closest mathcing pair
         left, right = self.find_closest_pair()
