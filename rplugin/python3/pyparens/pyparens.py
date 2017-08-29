@@ -5,16 +5,12 @@ class PyParens(object):
     def __init__(self, vim):
         self.vim = vim
         self.pairs = []
-        # self.vim.vars['pyparens_hl_group'] = ""
-        self.col_group = ""
         self.bounds = [0, 0]
         self.text = ""
         self.cursor = 0
         self.last_pair_pos = [None, None]
 
     def init(self):
-        # self.vim.vars['pyparens_hl_group'] = self.vim.vars['pyparens_hl_group']
-        self.col_group = self.vim.vars['pyparens_hl_col_group']
         filetype = self.vim.current.buffer.options['ft']
         self.pairs = self.vim.vars['pyparens_pairs']
         lang_pairs = self.vim.vars['pyparens_ft_pairs'].get(filetype)
@@ -129,21 +125,24 @@ class PyParens(object):
             # +1 as buffer is 0 index, windows are 1 index
             cmd.append('\%{}l\%>{}c\%<{}c'.format(
                 start[0] + 1, start[1] - 1, end[1]))
-        self.vim.command(
-            '2match {} /'.format(self.vim.vars['pyparens_hl_group']) + '\|'.join(cmd) + '/')
+        self.vim.command('2match {} /'.format(
+            self.vim.vars['pyparens_hl_group']) + '\|'.join(cmd) + '/')
 
     def highlight_col(self, left, right):
         lower = min(left[0][1], right[0][1])
         # Return if no column to highlight
         if lower < 1:
             return
-        self.vim.command('3match {} /'.format(self.col_group) +
-                         '.\%>{}l\%<{}l\%{}c/'.format(
-                             left[0][0] + 1, right[0][0] + 1, lower + 1))
+        self.vim.command('3match {} /'.format(
+            self.vim.vars['pyparens_hl_col_group']) +
+            '.\%>{}l\%<{}l\%{}c/'.format(
+                left[0][0] + 1, right[0][0] + 1, lower + 1))
 
     def clear_highlight(self):
-        self.vim.command('silent! 2match clear {}'.format(self.vim.vars['pyparens_hl_group']))
-        self.vim.command('silent! 3match clear {}'.format(self.col_group))
+        self.vim.command('silent! 2match clear {}'.format(
+            self.vim.vars['pyparens_hl_group']))
+        self.vim.command('silent! 3match clear {}'.format(
+            self.vim.vars['pyparens_hl_col_group']))
 
     def match(self):
         # Get any changes to buffer since init
@@ -177,5 +176,6 @@ class PyParens(object):
         # Highlight matches
         self.highlight(left, right)
         # Highlight column if needed
-        if self.col_group != '' and right[1][0] - left[0][0] > 2:
+        if self.vim.vars['pyparens_hl_col_group'] != '' and \
+                right[1][0] - left[0][0] > 2:
             self.highlight_col(left, right)
