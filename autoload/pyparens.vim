@@ -9,14 +9,9 @@ function! pyparens#setup()
 
 	" Default to enable
 	if !exists('b:pyparens_enabled')
-		call pyparens#init()
 		call pyparens#enable()
 	endif
 
-endfunction
-
-function! pyparens#init()
-	return has('nvim') ? PyParensInit() : pyparens#vim#init()
 endfunction
 
 function! pyparens#match()

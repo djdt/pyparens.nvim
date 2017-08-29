@@ -9,10 +9,6 @@ nvim = pyparens.rplugin.Neovim(vim)
 pyparens = PyParens(nvim)
 EOF
 
-function! pyparens#vim#init()
-py3 pyparens.init()
-endfunction
-
 function! pyparens#vim#match()
 py3 pyparens.match()
 endfunction

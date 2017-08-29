@@ -10,13 +10,6 @@ class PyParens(object):
         self.cursor = 0
         self.last_pair_pos = [None, None]
 
-    def init(self):
-        filetype = self.vim.current.buffer.options['ft']
-        self.pairs = self.vim.vars['pyparens_pairs']
-        lang_pairs = self.vim.vars['pyparens_ft_pairs'].get(filetype)
-        if lang_pairs:
-            self.pairs.extend(lang_pairs)
-
     def bufpos(self, textpos):
         if textpos is None:
             return None, None
@@ -102,14 +95,14 @@ class PyParens(object):
         lmatch, rmatch = None, None
 
         # Build pairs
-        # filetype = self.vim.current.buffer.options['ft']
-        # pairs = self.vim.vars['pyparens_pairs']
-        # lang_pairs = self.vim.vars['pyparens_ft_pairs'].get(filetype)
-        # if lang_pairs:
-        #     pairs.extend(lang_pairs)
+        filetype = self.vim.current.buffer.options['ft']
+        pairs = self.vim.vars['pyparens_pairs']
+        lang_pairs = self.vim.vars['pyparens_ft_pairs'].get(filetype)
+        if lang_pairs:
+            pairs.extend(lang_pairs)
 
         # Search the text for matches
-        for pair in self.pairs:
+        for pair in pairs:
             regex_pair = [re.compile(pair[0]), re.compile(pair[1])]
             lpos = self.find_pair_left(regex_pair)
             if lpos is not None and lpos.end() > lclosest:
