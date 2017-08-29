@@ -5,7 +5,7 @@ class PyParens(object):
     def __init__(self, vim):
         self.vim = vim
         self.pairs = []
-        self.group = ""
+        # self.vim.vars['pyparens_hl_group'] = ""
         self.col_group = ""
         self.bounds = [0, 0]
         self.text = ""
@@ -13,7 +13,7 @@ class PyParens(object):
         self.last_pair_pos = [None, None]
 
     def init(self):
-        self.group = self.vim.vars['pyparens_hl_group']
+        # self.vim.vars['pyparens_hl_group'] = self.vim.vars['pyparens_hl_group']
         self.col_group = self.vim.vars['pyparens_hl_col_group']
         filetype = self.vim.current.buffer.options['ft']
         self.pairs = self.vim.vars['pyparens_pairs']
@@ -130,7 +130,7 @@ class PyParens(object):
             cmd.append('\%{}l\%>{}c\%<{}c'.format(
                 start[0] + 1, start[1] - 1, end[1]))
         self.vim.command(
-            '2match {} /'.format(self.group) + '\|'.join(cmd) + '/')
+            '2match {} /'.format(self.vim.vars['pyparens_hl_group']) + '\|'.join(cmd) + '/')
 
     def highlight_col(self, left, right):
         lower = min(left[0][1], right[0][1])
@@ -142,7 +142,7 @@ class PyParens(object):
                              left[0][0] + 1, right[0][0] + 1, lower + 1))
 
     def clear_highlight(self):
-        self.vim.command('silent! 2match clear {}'.format(self.group))
+        self.vim.command('silent! 2match clear {}'.format(self.vim.vars['pyparens_hl_group']))
         self.vim.command('silent! 3match clear {}'.format(self.col_group))
 
     def match(self):
@@ -166,7 +166,6 @@ class PyParens(object):
             return
         left = self.bufpos(left.start()), self.bufpos(left.end())
         right = self.bufpos(right.start()), self.bufpos(right.end())
-        self.vim.command('echo "{} {}"'.format(left, right))
 
         # Return if match hasn't changed
         if self.last_pair_pos == [left, right]:
