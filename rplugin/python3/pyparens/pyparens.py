@@ -34,15 +34,25 @@ class PyParens(object):
                 row += 1
                 col = 1
             textpos -= 1
-        # Remember to readd the trimed rows
+        # Remember to read the trimed rows
         return row + self.bounds[0], col
 
     def textpos(self, bufpos):
-        pos = 0
-        # Trim rows out of scope
-        for i in range(bufpos[0] - self.bounds[0]):
-            pos += len(self.buffer[i]) + 1
-        return pos + bufpos[1]
+        cline = 1
+        textpos = 0
+        # # Trim rows out of scope
+        for c in self.text:
+            textpos += 1
+            if c == '\n':
+                cline += 1
+            if cline > bufpos[0] - self.bounds[0]:
+                break
+
+        return textpos + bufpos[1]
+
+        # for i in range(bufpos[0] - self.bounds[0]):
+        #     pos += len(self.vim.current.buffer[i]) + 1  # + 1 for \n
+        # return pos + bufpos[1]
 
     def reverse_regex(self, regex, start, end):
         match = None
@@ -140,11 +150,11 @@ class PyParens(object):
         # Bounds -1 as lines are 1 indexed
         self.bounds = (int(self.vim.eval("line('w0')")) - 1,
                        int(self.vim.eval("line('w$')")))
-        self.buffer = self.vim.current.buffer[self.bounds[0]:self.bounds[1]]
+        self.text = '\n'.join(
+                self.vim.current.buffer[self.bounds[0]:self.bounds[1]])
         cursor = self.vim.current.window.cursor
         self.cursor = self.textpos((cursor[0] - 1, cursor[1]))
         # Form an easily searchable text
-        self.text = '\n'.join(self.buffer)
 
         # Find the closest mathcing pair
         left, right = self.find_closest_pair()
@@ -156,6 +166,7 @@ class PyParens(object):
             return
         left = self.bufpos(left.start()), self.bufpos(left.end())
         right = self.bufpos(right.start()), self.bufpos(right.end())
+        self.vim.command('echo "{} {}"'.format(left, right))
 
         # Return if match hasn't changed
         if self.last_pair_pos == [left, right]:
