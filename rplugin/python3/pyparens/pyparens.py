@@ -137,7 +137,7 @@ class PyParens(object):
 
     def clear_highlight(self):
         self.vim.command('silent! 2match clear {}'.format(
-            self.vim.vars['pyparens_hl_col_group']))
+            self.vim.vars['pyparens_hl_group']))
         self.vim.command('silent! 3match clear {}'.format(
             self.vim.vars['pyparens_hl_col_group']))
 
